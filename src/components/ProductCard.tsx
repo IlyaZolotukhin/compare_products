@@ -4,8 +4,12 @@ import {AppRootStateType} from "../store/store";
 import {setProductsPerPageAC, setSelectedProductsAC} from "../store/reducers";
 import styled from "styled-components";
 
+type ProductCardType = {
+    handleClosePopup: () => void;
+}
 
-export const ProductCard = () => {
+
+export const ProductCard = ({handleClosePopup}: ProductCardType) => {
 
     const products = useSelector((state: AppRootStateType) => state.pageReducer.products);
     const productsPerPage = useSelector((state: AppRootStateType) => state.pageReducer.productsPerPage);
@@ -20,7 +24,7 @@ export const ProductCard = () => {
     dispatch(setSelectedProductsAC(filteredProducts))
 
     return (
-        <Container>
+        <Container onClick={handleClosePopup}>
             <div><h1>Смартфоны</h1></div>
             <Filter>Отобразить товары: <SPAN onClick={() => handleProductsPerPageChange(2)}>2</SPAN>
                 <SPAN onClick={() => handleProductsPerPageChange(3)}>3</SPAN>

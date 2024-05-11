@@ -1,16 +1,18 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ProductCard} from './components/ProductCard';
-import {PopupWindow} from './components/PopupWindow';
 import {ComparisonTable} from './components/ComparisonTable';
 import {Header} from './components/Header';
 
 const App = () => {
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const handleClosePopup = () => {
+        setIsPopupOpen(false)
+    }
     return (
             <div className="app">
                 <Header />
-                <ProductCard />
-                {/*<PopupWindow/>*/}
-                <ComparisonTable/>
+                <ProductCard handleClosePopup={handleClosePopup}/>
+                <ComparisonTable isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen}/>
             </div>
     );
 }
