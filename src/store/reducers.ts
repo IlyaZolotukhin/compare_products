@@ -4,7 +4,8 @@ export type PageType = {
     productsPerPage: number,
     showPopup: boolean,
     products: Types[],
-    selectedProducts: Types[]
+    selectedProducts: Types[],
+    changeProduct: Types
 }
 
 const initialState = {
@@ -131,98 +132,9 @@ const initialState = {
             wirelessCharging: false,
             price: 27490
         },
-        {
-            id: 9,
-            name: 'Product 9',
-            image: 'product1.jpg',
-            manufacturer: 'Apple',
-            releaseYear: 2021,
-            screenSize: 6.5,
-            country: 'Country 1',
-            memory: 128,
-            refreshRate: 60,
-            nfc: true,
-            esimSupport: true,
-            wirelessCharging: false,
-            price: 27490
-        },
-        {
-            id: 10,
-            name: 'Product 10',
-            image: 'product1.jpg',
-            manufacturer: 'Apple',
-            releaseYear: 2021,
-            screenSize: 6.5,
-            country: 'Country 1',
-            memory: 128,
-            refreshRate: 60,
-            nfc: true,
-            esimSupport: true,
-            wirelessCharging: false,
-            price: 27490
-        },
-        {
-            id: 11,
-            name: 'Product 11',
-            image: 'product1.jpg',
-            manufacturer: 'Apple',
-            releaseYear: 2021,
-            screenSize: 6.5,
-            country: 'Country 1',
-            memory: 128,
-            refreshRate: 60,
-            nfc: true,
-            esimSupport: true,
-            wirelessCharging: false,
-            price: 27490
-        },
-        {
-            id: 12,
-            name: 'Product 12',
-            image: 'product1.jpg',
-            manufacturer: 'Apple',
-            releaseYear: 2021,
-            screenSize: 6.5,
-            country: 'Country 1',
-            memory: 128,
-            refreshRate: 60,
-            nfc: true,
-            esimSupport: true,
-            wirelessCharging: false,
-            price: 27490
-        },
-        {
-            id: 13,
-            name: 'Product 13',
-            image: 'product1.jpg',
-            manufacturer: 'Apple',
-            releaseYear: 2021,
-            screenSize: 6.5,
-            country: 'Country 1',
-            memory: 128,
-            refreshRate: 60,
-            nfc: true,
-            esimSupport: true,
-            wirelessCharging: false,
-            price: 27490
-        },
-        {
-            id: 14,
-            name: 'Product 14',
-            image: 'product1.jpg',
-            manufacturer: 'Apple',
-            releaseYear: 2021,
-            screenSize: 6.5,
-            country: 'Country 1',
-            memory: 128,
-            refreshRate: 60,
-            nfc: true,
-            esimSupport: true,
-            wirelessCharging: false,
-            price: 27490
-        },
     ],
-    selectedProducts: []
+    selectedProducts: [],
+    changeProduct: {} as Types
 };
 
 export const pageReducer = (state: PageType = initialState, action: ActionsType): PageType => {
@@ -237,17 +149,11 @@ export const pageReducer = (state: PageType = initialState, action: ActionsType)
                 ...state,
                 selectedProducts: action.filteredProducts
             };
-        case 'SHOW_POPUP':
+        case 'CHANGE_PRODUCT_ID':
             return {
                 ...state,
-                showPopup: true
+                changeProduct: action.product
             };
-        case 'HIDE_POPUP':
-            return {
-                ...state,
-                showPopup: false
-            };
-
         default:
             return state;
     }
@@ -263,16 +169,13 @@ export type SetSelectedProducts = {
     filteredProducts: Types[]
 }
 
-export type ShowPopupType = {
-    type: 'SHOW_POPUP'
+export type ChangeProductIdType = {
+    type: 'CHANGE_PRODUCT_ID',
+    product: Types
 }
 
-export type HidePopupType = {
-    type: 'HIDE_POPUP'
-}
 
-type ActionsType = SetProductsPerPageType | ShowPopupType
-    | HidePopupType | SetSelectedProducts
+type ActionsType = SetProductsPerPageType | ChangeProductIdType| SetSelectedProducts
 
 export const setProductsPerPageAC = (perPage: number): SetProductsPerPageType => {
     return {type: 'SET_PRODUCTS_PER_PAGE', perPage: perPage}
@@ -280,9 +183,7 @@ export const setProductsPerPageAC = (perPage: number): SetProductsPerPageType =>
 export const setSelectedProductsAC = (filteredProducts: Types[]): SetSelectedProducts => {
     return {type: 'SET_SELECTED_PRODUCTS', filteredProducts: filteredProducts}
 }
-export const showPopupAC = (): ShowPopupType => {
-    return {type: 'SHOW_POPUP'}
+export const changeProductIdAC = (product: Types): ChangeProductIdType => {
+    return {type: 'CHANGE_PRODUCT_ID', product: product}
 }
-export const hidePopupAC = (): HidePopupType => {
-    return {type: 'HIDE_POPUP'}
-}
+

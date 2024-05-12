@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from "styled-components";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../store/store";
+import {changeProductIdAC} from "../store/reducers";
+import {Types} from "../types/types";
 
 type PopupWindowType = {
     onClose: () => void
@@ -10,24 +12,28 @@ type PopupWindowType = {
 }
 
 export const PopupWindow = ({onClose, top, left}: PopupWindowType) => {
+    const dispatch = useDispatch();
     const handleBlur = () => {
         onClose();
     };
     const products = useSelector((state: AppRootStateType) => state.pageReducer.products);
     const productsPerPage = useSelector((state: AppRootStateType) => state.pageReducer.productsPerPage);
     const PopupProducts = products.slice(productsPerPage);
-    /*dispatch(setSelectedProductsAC(PopupProducts))*/
-    console.log(PopupProducts)
+    const handleProductChange = (product: Types) =>{
+        dispatch(changeProductIdAC(product))
+        onClose();
+    }
+
     return (
         <Popup onBlur={handleBlur} tabIndex={0} top={top} left={left}>
             <Container>
                 <table>
                     <tbody>
-                    <TdArrow>
+                    <td>
                         {PopupProducts.map(product => (
-                            <tr key={product.id}>{'⇄'}</tr>
+                            <TrArrow onClick={() => handleProductChange(product)} key={product.id}>⇄</TrArrow>
                         ))}
-                    </TdArrow>
+                    </td>
                     <td>
                         {PopupProducts.map(product => (
                             <tr key={product.id}>{product.name}</tr>
@@ -70,7 +76,7 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center`
 ;
-const TdArrow = styled.td`
+const TrArrow = styled.tr`
 color: #36935B;
     font-weight: bold`
 ;

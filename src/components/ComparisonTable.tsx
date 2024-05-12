@@ -1,9 +1,10 @@
-import React, {useRef, useState} from 'react';
-import {useSelector} from "react-redux";
+import React, {useEffect, useRef, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../store/store";
 import styled from "styled-components";
 import {Filter} from "../components/ProductCard";
 import {PopupWindow} from "./PopupWindow";
+import {setSelectedProductsAC} from "../store/reducers";
 
 type ComparisonTableType = {
     isPopupOpen: boolean;
@@ -11,7 +12,11 @@ type ComparisonTableType = {
 }
 
 export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableType) => {
+    const products = useSelector((state: AppRootStateType) => state.pageReducer.products);
+    const productsPerPage = useSelector((state: AppRootStateType) => state.pageReducer.productsPerPage);
     const selectedProducts = useSelector((state: AppRootStateType) => state.pageReducer.selectedProducts);
+    const ChangeProduct = useSelector((state: AppRootStateType) => state.pageReducer.changeProduct);
+    const dispatch = useDispatch();
 
     const [popupPosition, setPopupPosition] = useState({top: 0, left: 0});
     const [allReleaseYearsEqual, setAllReleaseYearsEqual] = useState(false);
@@ -24,9 +29,28 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
     const [allEsimSupportEqual, setAllEsimSupportEqual] = useState(false);
     const [allWirelessChargingEqual, setAllWirelessChargingEqual] = useState(false);
     const [allPriceEqual, setAllPriceEqual] = useState(false);
+    const [productId, setProductId] = useState<number | null>(null);
     const buttonRef = useRef(null);
 
-    const handleOpenPopup = (e: React.MouseEvent<HTMLSpanElement>) => {
+    // Фильтрация массива продуктов с учетом выбранного количества на странице
+    const filteredProducts = products.slice(0, productsPerPage);
+
+    useEffect(() => {
+        dispatch(setSelectedProductsAC(filteredProducts))
+    }, [productsPerPage]);
+
+    useEffect(() => {
+        let indexToReplace = selectedProducts.findIndex(product => product.id === productId);
+        if (indexToReplace !== -1) {
+            const updatedProduct = ChangeProduct;
+            const updatedProducts = [...selectedProducts];
+            updatedProducts[indexToReplace] = updatedProduct;
+            dispatch(setSelectedProductsAC(updatedProducts));
+        }
+    }, [ChangeProduct, selectedProducts]);
+
+    const handleOpenPopup = (e: React.MouseEvent<HTMLSpanElement>, id: number) => {
+        setProductId(id)
         setIsPopupOpen(true);
         const buttonRect = (e.target as HTMLElement).getBoundingClientRect();
         setPopupPosition({top: buttonRect.top, left: buttonRect.right - 40});
@@ -50,6 +74,7 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
         setAllWirelessChargingEqual(isChecked ? selectedProducts.every(product => product.wirelessCharging === selectedProducts[0].wirelessCharging) : false);
         setAllPriceEqual(isChecked ? selectedProducts.every(product => product.price === selectedProducts[0].price) : false);
     };
+
     return (
         <Container>
             {isPopupOpen && <PopupWindow onClose={handleClosePopup} top={popupPosition.top} left={popupPosition.left} />}
@@ -59,7 +84,7 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
                     <td></td>
                     {selectedProducts.map(product => (
                         <td key={product.id}>
-                            {product.image}<span ref={buttonRef} onClick={handleOpenPopup}> open</span>
+                            {product.image}<span ref={buttonRef} onClick={(e) => handleOpenPopup(e, product.id) }> open</span>
                         </td>
                     ))}
 
