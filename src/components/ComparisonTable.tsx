@@ -4,7 +4,8 @@ import {AppRootStateType} from "../store/store";
 import styled from "styled-components";
 import {Filter} from "../components/ProductCard";
 import {PopupWindow} from "./PopupWindow";
-import {setSelectedProductsAC} from "../store/reducers";
+import {setProductTableAC, setSelectedProductsAC} from "../store/reducers";
+import {Types} from "../types/types";
 
 type ComparisonTableType = {
     isPopupOpen: boolean;
@@ -15,7 +16,7 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
     const products = useSelector((state: AppRootStateType) => state.pageReducer.products);
     const productsPerPage = useSelector((state: AppRootStateType) => state.pageReducer.productsPerPage);
     const selectedProducts = useSelector((state: AppRootStateType) => state.pageReducer.selectedProducts);
-    const ChangeProduct = useSelector((state: AppRootStateType) => state.pageReducer.changeProduct);
+    const ChangeProductPopup = useSelector((state: AppRootStateType) => state.pageReducer.changeProduct);
     const dispatch = useDispatch();
 
     const [popupPosition, setPopupPosition] = useState({top: 0, left: 0});
@@ -30,6 +31,7 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
     const [allWirelessChargingEqual, setAllWirelessChargingEqual] = useState(false);
     const [allPriceEqual, setAllPriceEqual] = useState(false);
     const [productId, setProductId] = useState<number | null>(null);
+
     const buttonRef = useRef(null);
 
     // Фильтрация массива продуктов с учетом выбранного количества на странице
@@ -42,18 +44,20 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
     useEffect(() => {
         let indexToReplace = selectedProducts.findIndex(product => product.id === productId);
         if (indexToReplace !== -1) {
-            const updatedProduct = ChangeProduct;
+            const updatedProduct = ChangeProductPopup;
             const updatedProducts = [...selectedProducts];
             updatedProducts[indexToReplace] = updatedProduct;
             dispatch(setSelectedProductsAC(updatedProducts));
         }
-    }, [ChangeProduct, selectedProducts]);
+    }, [ChangeProductPopup, selectedProducts]);
 
-    const handleOpenPopup = (e: React.MouseEvent<HTMLSpanElement>, id: number) => {
+    const handleOpenPopup = (e: React.MouseEvent<HTMLSpanElement>, id: number, product: Types) => {
+
+dispatch(setProductTableAC(product))
         setProductId(id)
         setIsPopupOpen(true);
         const buttonRect = (e.target as HTMLElement).getBoundingClientRect();
-        setPopupPosition({top: buttonRect.top, left: buttonRect.right - 40});
+        setPopupPosition({top: buttonRect.top + 10, left: buttonRect.right - 20});
     };
 
     const handleClosePopup = () => {
@@ -84,7 +88,8 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
                     <td></td>
                     {selectedProducts.map(product => (
                         <td key={product.id}>
-                            {product.image}<span ref={buttonRef} onClick={(e) => handleOpenPopup(e, product.id) }> open</span>
+                             <TDImg><IMG src={product.image} alt={product.name}/><Shevron ref={buttonRef}
+                              onClick={(e) => handleOpenPopup(e, product.id, product) }> &#8964;</Shevron></TDImg>
                         </td>
                     ))}
 
@@ -173,8 +178,23 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center`
 ;
-
-
 const TD = styled.td`
+  width: 205px;
+  padding: 10px 40px 10px 0;
   border-bottom: 1px #A6A5A9 solid`
+;
+const IMG = styled.img`
+  width: 60px;
+    height: 60px;`
+;
+const TDImg = styled.div`
+  display: flex;
+    flex-direction: row;
+    align-items: center`
+;
+const Shevron = styled.span`
+  margin: 5px;
+  font-size: 30px;
+    color: #0D5ADC;
+  cursor: pointer;`
 ;
