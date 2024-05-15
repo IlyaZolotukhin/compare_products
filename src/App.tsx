@@ -9,11 +9,11 @@ const App = () => {
         setIsPopupOpen(false)
     }
     return (
-            <div className="app">
-                <Header />
-                <ProductCard handleClosePopup={handleClosePopup}/>
-                <ComparisonTable isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen}/>
-            </div>
+        <div className="app">
+            <Header handleClosePopup={handleClosePopup} />
+            <ProductCard handleClosePopup={handleClosePopup}/>
+            <ComparisonTable isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen}/>
+        </div>
     );
 }
 

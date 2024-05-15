@@ -1,10 +1,14 @@
 import React from 'react';
 import styled from "styled-components";
 
-export const Header = () => {
+type HeaderType = {
+    handleClosePopup: () => void;
+}
+
+export const Header = ({handleClosePopup}: HeaderType) => {
 
     return (
-        <Container>
+        <Container onClick={handleClosePopup}>
             <ContainerLeft>
                 <p>Каталог</p>
             </ContainerLeft>

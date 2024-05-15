@@ -4,8 +4,8 @@ import {AppRootStateType} from "../store/store";
 import styled from "styled-components";
 import {Filter} from "../components/ProductCard";
 import {PopupWindow} from "./PopupWindow";
-import {setProductTableAC, setSelectedProductsAC} from "../store/reducers";
-import {Types} from "../types/types";
+import {deleteProductPopupAC, setChangedProductsAC, setProductTableAC, setSelectedProductsAC} from "../store/reducers";
+import {TProduct} from "../types/TProduct";
 
 type ComparisonTableType = {
     isPopupOpen: boolean;
@@ -13,12 +13,12 @@ type ComparisonTableType = {
 }
 
 export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableType) => {
-    const products = useSelector((state: AppRootStateType) => state.pageReducer.products);
     const productsPerPage = useSelector((state: AppRootStateType) => state.pageReducer.productsPerPage);
     const selectedProducts = useSelector((state: AppRootStateType) => state.pageReducer.selectedProducts);
     const ChangeProductPopup = useSelector((state: AppRootStateType) => state.pageReducer.changeProduct);
     const dispatch = useDispatch();
 
+    /*const [isPopupOpen, setIsPopupOpen] = useState(false);*/
     const [popupPosition, setPopupPosition] = useState({top: 0, left: 0});
     const [allReleaseYearsEqual, setAllReleaseYearsEqual] = useState(false);
     const [allScreenSizesEqual, setAllScreenSizesEqual] = useState(false);
@@ -34,11 +34,8 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
 
     const buttonRef = useRef(null);
 
-    // Фильтрация массива продуктов с учетом выбранного количества на странице
-    const filteredProducts = products.slice(0, productsPerPage);
-
     useEffect(() => {
-        dispatch(setSelectedProductsAC(filteredProducts))
+        dispatch(setSelectedProductsAC(productsPerPage))
     }, [productsPerPage]);
 
     useEffect(() => {
@@ -47,14 +44,18 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
             const updatedProduct = ChangeProductPopup;
             const updatedProducts = [...selectedProducts];
             updatedProducts[indexToReplace] = updatedProduct;
-            dispatch(setSelectedProductsAC(updatedProducts));
+            dispatch(setChangedProductsAC(updatedProducts));
         }
     }, [ChangeProductPopup, selectedProducts]);
 
-    const handleOpenPopup = (e: React.MouseEvent<HTMLSpanElement>, id: number, product: Types) => {
+    useEffect(() => {
+        dispatch(deleteProductPopupAC(ChangeProductPopup.id));
+    }, [ChangeProductPopup]);
 
-dispatch(setProductTableAC(product))
+    const handleOpenPopup = (e: React.MouseEvent<HTMLSpanElement>, id: number, product: TProduct) => {
+        dispatch(setProductTableAC(product))
         setProductId(id)
+
         setIsPopupOpen(true);
         const buttonRect = (e.target as HTMLElement).getBoundingClientRect();
         setPopupPosition({top: buttonRect.top + 10, left: buttonRect.right - 20});
@@ -79,17 +80,17 @@ dispatch(setProductTableAC(product))
         setAllPriceEqual(isChecked ? selectedProducts.every(product => product.price === selectedProducts[0].price) : false);
     };
 
-    return (
-        <Container>
-            {isPopupOpen && <PopupWindow onClose={handleClosePopup} top={popupPosition.top} left={popupPosition.left} />}
+    return (<>
+        {isPopupOpen && <PopupWindow onClose={handleClosePopup} top={popupPosition.top} left={popupPosition.left} />}
+        <Container onBlur={handleClosePopup}>
             <table>
                 <thead>
                 <tr>
                     <td></td>
                     {selectedProducts.map(product => (
                         <td key={product.id}>
-                             <TDImg><IMG src={product.image} alt={product.name}/><Shevron ref={buttonRef}
-                              onClick={(e) => handleOpenPopup(e, product.id, product) }> &#8964;</Shevron></TDImg>
+                             <TDImg><IMG onClick={handleClosePopup} src={product.image} alt={product.name}/>{8 && <Shevron ref={buttonRef}
+                              onClick={(e) => handleOpenPopup(e, product.id, product) }> &#8964;</Shevron>}</TDImg>
                         </td>
                     ))}
 
@@ -97,7 +98,7 @@ dispatch(setProductTableAC(product))
                 <tr>
                     <TD><Filter onClick={handleClosePopup}><input onChange={handleCompareRow} type={"checkbox"}/> Показать различия</Filter></TD>
                     {selectedProducts.map(product => (
-                        <TD key={product.id}>{product.name}</TD>
+                        <TD onClick={handleClosePopup} key={product.id}>{product.name}</TD>
                     ))}
                 </tr>
                 </thead>
@@ -167,6 +168,7 @@ dispatch(setProductTableAC(product))
                 </tbody>
             </table>
         </Container>
+        </>
     );
 }
 
