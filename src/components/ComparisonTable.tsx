@@ -81,13 +81,19 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
         setAllPriceEqual(isChecked ? selectedProducts.every(product => product.price === selectedProducts[0].price) : false);
     };
 
+    const closeModal = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+            setIsPopupOpen(false);
+        }
+    };
+
     return (<>
         {isPopupOpen && <PopupWindow onClose={handleClosePopup} top={popupPosition.top} left={popupPosition.left} />}
         <Container onBlur={handleClosePopup}>
             <table>
                 <thead>
                 <tr>
-                    <td></td>
+                    <td onClick={closeModal}></td>
                     {selectedProducts.map(product => (
                         <td key={product.id}>
                              <TDImg><IMG onClick={handleClosePopup} src={product.image} alt={product.name}/>{products.length !== productsPerPage && <Shevron ref={buttonRef}
