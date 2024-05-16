@@ -4,8 +4,8 @@ import {AppRootStateType} from "../store/store";
 import styled from "styled-components";
 import {Filter} from "../components/ProductCard";
 import {PopupWindow} from "./PopupWindow";
-import {deleteProductPopupAC, setChangedProductsAC, setProductTableAC, setSelectedProductsAC} from "../store/reducers";
 import {TProduct} from "../types/TProduct";
+import {setChangedProductsAC, setProductTableAC, setSelectedProductsAC} from "../store/actionsCreator";
 
 type ComparisonTableType = {
     isPopupOpen: boolean;
@@ -16,6 +16,7 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
     const productsPerPage = useSelector((state: AppRootStateType) => state.pageReducer.productsPerPage);
     const selectedProducts = useSelector((state: AppRootStateType) => state.pageReducer.selectedProducts);
     const ChangeProductPopup = useSelector((state: AppRootStateType) => state.pageReducer.changeProduct);
+    const products = useSelector((state: AppRootStateType) => state.pageReducer.products);
     const dispatch = useDispatch();
 
     /*const [isPopupOpen, setIsPopupOpen] = useState(false);*/
@@ -48,9 +49,9 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
         }
     }, [ChangeProductPopup, selectedProducts]);
 
-    useEffect(() => {
+/*    useEffect(() => {
         dispatch(deleteProductPopupAC(ChangeProductPopup.id));
-    }, [ChangeProductPopup]);
+    }, [ChangeProductPopup]);*/
 
     const handleOpenPopup = (e: React.MouseEvent<HTMLSpanElement>, id: number, product: TProduct) => {
         dispatch(setProductTableAC(product))
@@ -89,7 +90,7 @@ export const ComparisonTable = ({isPopupOpen, setIsPopupOpen}: ComparisonTableTy
                     <td></td>
                     {selectedProducts.map(product => (
                         <td key={product.id}>
-                             <TDImg><IMG onClick={handleClosePopup} src={product.image} alt={product.name}/>{8 && <Shevron ref={buttonRef}
+                             <TDImg><IMG onClick={handleClosePopup} src={product.image} alt={product.name}/>{products.length !== productsPerPage && <Shevron ref={buttonRef}
                               onClick={(e) => handleOpenPopup(e, product.id, product) }> &#8964;</Shevron>}</TDImg>
                         </td>
                     ))}
@@ -187,7 +188,7 @@ const TD = styled.td`
 ;
 const IMG = styled.img`
   width: 60px;
-    height: 60px;`
+  height: 60px;`
 ;
 const TDImg = styled.div`
   display: flex;
@@ -197,6 +198,6 @@ const TDImg = styled.div`
 const Shevron = styled.span`
   margin: 5px;
   font-size: 30px;
-    color: #0D5ADC;
+  color: #0D5ADC;
   cursor: pointer;`
 ;

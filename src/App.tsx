@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {MouseEventHandler, useState} from 'react';
 import {ProductCard} from './components/ProductCard';
 import {ComparisonTable} from './components/ComparisonTable';
 import {Header} from './components/Header';
@@ -8,8 +8,15 @@ const App = () => {
     const handleClosePopup = () => {
         setIsPopupOpen(false)
     }
+
+    const closeModal = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+            setIsPopupOpen(false);
+        }
+    };
+
     return (
-        <div className="app">
+        <div onClick={closeModal} className="app">
             <Header handleClosePopup={handleClosePopup} />
             <ProductCard handleClosePopup={handleClosePopup}/>
             <ComparisonTable isPopupOpen={isPopupOpen} setIsPopupOpen={setIsPopupOpen}/>

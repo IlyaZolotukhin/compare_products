@@ -1,4 +1,5 @@
 import {TProduct} from "../types/TProduct";
+import {ActionsType} from "../types/reducerType";
 
 export type PageType = {
     productsPerPage: number,
@@ -11,7 +12,7 @@ export type PageType = {
 
 const initialState = {
     productsPerPage: 3,
-    products: [
+    products:  [
         {
             id: 1,
             name: 'POCO C51',
@@ -163,9 +164,6 @@ export const pageReducer = (state: PageType = initialState, action: ActionsType)
                 ...state,
                 changeProduct: action.product
             };
-
-
-
         case 'SET_POPUP_PRODUCTS':
             return {
                 ...state,
@@ -191,74 +189,3 @@ export const pageReducer = (state: PageType = initialState, action: ActionsType)
             return state;
     }
 };
-
-export type SetProductsPerPageType = {
-    type: 'SET_PRODUCTS_PER_PAGE',
-    perPage: number
-}
-
-export type SetSelectedProducts = {
-    type: 'SET_SELECTED_PRODUCTS',
-    productsPerPage: number
-}
-
-export type ChangeProductPopupType = {
-    type: 'CHANGE_PRODUCT_POPUP',
-    product: TProduct
-}
-
-export type ChangeProductTableType = {
-    type: 'CHANGE_PRODUCT_TABLE',
-    product: TProduct
-}
-
-export type ChangedProductsType = {
-    type: 'SET_CHANGED_PRODUCTS',
-    products: TProduct[]
-}
-
-export type setPopupProductsType = {
-    type: 'SET_POPUP_PRODUCTS',
-    productsPerPage: number
-}
-
-export type deleteProductPopupType = {
-    type: 'DELETE_POPUP_PRODUCTS',
-    id: number | null
-}
-
-export type SetChangedPopupType = {
-    type: 'SET_CHANGED_POPUP',
-    products: TProduct[]
-}
-
-type ActionsType = SetProductsPerPageType | ChangeProductTableType| SetSelectedProducts |
-    setPopupProductsType | ChangeProductPopupType | deleteProductPopupType | ChangedProductsType | SetChangedPopupType
-
-export const setProductsPerPageAC = (perPage: number): SetProductsPerPageType => {
-    return {type: 'SET_PRODUCTS_PER_PAGE', perPage: perPage}
-}
-export const setChangedProductsAC = (products: TProduct[]): ChangedProductsType => {
-    return {type: 'SET_CHANGED_PRODUCTS', products: products}
-}
-export const setSelectedProductsAC = (productsPerPage: number): SetSelectedProducts => {
-    return {type: 'SET_SELECTED_PRODUCTS', productsPerPage: productsPerPage}
-}
-
-export const setProductTableAC = (product: TProduct): ChangeProductTableType => {
-    return {type: 'CHANGE_PRODUCT_TABLE', product: product}
-}
-export const changeProductPopupAC = (product: TProduct): ChangeProductPopupType => {
-    return {type: 'CHANGE_PRODUCT_POPUP', product: product}
-}
-export const setChangedPopupAC = (products: TProduct[]): SetChangedPopupType => {
-    return {type: 'SET_CHANGED_POPUP', products: products}
-}
-export const setPopupProductsAC = (productsPerPage: number): setPopupProductsType => {
-    return {type: 'SET_POPUP_PRODUCTS', productsPerPage: productsPerPage}
-}
-export const deleteProductPopupAC = (id: number | null): deleteProductPopupType => {
-    return {type: 'DELETE_POPUP_PRODUCTS', id: id}
-}
-
-

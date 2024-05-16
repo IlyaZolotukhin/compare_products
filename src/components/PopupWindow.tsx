@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import styled from "styled-components";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "../store/store";
-import {changeProductPopupAC, deleteProductPopupAC, setPopupProductsAC} from "../store/reducers";
 import {TProduct} from "../types/TProduct";
+import {changeProductPopupAC, deleteProductPopupAC, setPopupProductsAC} from "../store/actionsCreator";
 
 type PopupWindowType = {
     onClose: () => void
@@ -14,7 +14,7 @@ type PopupWindowType = {
 export const PopupWindow = ({onClose, top, left}: PopupWindowType) => {
     const dispatch = useDispatch();
     const [searchTerm, setSearchTerm] = useState('');
-    const [hideEl, setHideEl] = useState(false);
+    const [hide, setHide] = useState<boolean>(false);
     const [productId, setProductId] = useState<number | null>(null);
 
     const productsPerPage = useSelector((state: AppRootStateType) => state.pageReducer.productsPerPage);
@@ -49,17 +49,16 @@ export const PopupWindow = ({onClose, top, left}: PopupWindowType) => {
 
         useEffect(() => {
             if (popupProducts.length > 3) {
-                setHideEl(true);
+                setHide(true);
             } else {
-                setHideEl(false);
+                setHide(false);
             }
         }, [filteredProducts]);
 
     return (
-        <Popup onBlur={handleBlur} tabIndex={0} top={top} left={left} hideEl={hideEl}>
-            {hideEl && <INPUT type="text"
+        <Popup onBlur={handleBlur} tabIndex={0} top={top} left={left} hide={hide}>
+            {hide && <INPUT type="text"
                               placeholder="Поиск"
-
                               value={searchTerm}
                               onChange={(e) => setSearchTerm(e.target.value)}/>}
             <Container>
@@ -75,7 +74,7 @@ export const PopupWindow = ({onClose, top, left}: PopupWindowType) => {
                 </div>
                 <div>
                     {filteredProducts.map(product => (
-                        <Container2 key={product.id}>{product.name}</Container2>
+                        <Name key={product.id}>{product.name}</Name>
                     ))}
                 </div>
             </Container>
@@ -83,7 +82,7 @@ export const PopupWindow = ({onClose, top, left}: PopupWindowType) => {
     );
 }
 
-const Popup = styled.div<{ top: number, left: number, hideEl: boolean }>`
+const Popup = styled.div<{ top: number, left: number, hide: boolean }>`
   position: absolute;
   top: ${(props) => props.top}px;
   left: ${(props) => props.left}px;
@@ -94,7 +93,7 @@ const Popup = styled.div<{ top: number, left: number, hideEl: boolean }>`
   padding: 5px;
   border: 1px #E3E3E3 solid;
   border-radius: 4px;
-  overflow-y: ${(props) => props.hideEl ? 'scroll' : 'none'};
+  overflow-y: ${(props) => props.hide ? 'scroll' : 'none'};
 `;
 const Container = styled.div`
   width: 50%;
@@ -102,10 +101,10 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center`
 ;
-const Container2 = styled.div`
-          width: 200px;
-          padding: 20px;
-    `
+const Name = styled.div`
+  width: 200px;
+  padding: 20px;
+  `
 ;
 const Arrow = styled.div`
   padding: 20px;

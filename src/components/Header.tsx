@@ -21,9 +21,9 @@ export const Header = ({handleClosePopup}: HeaderType) => {
 }
 
 const Container = styled.div`
-  font-weight: bold;
+  
   width: 100%;
-  margin: auto;
+  font-weight: bold;
   padding: 5px;
   display: flex;
   flex-direction: row;
@@ -36,12 +36,19 @@ const ContainerLeft = styled.div`
   margin-left: 165px;
   display: flex;
   flex-direction: row;
-  align-items: center;`
+  align-items: center;
+  @media screen and (width <= 1024px) {
+    margin-left: 5px;
+  }`
 ;
 const ContainerRight = styled.div`
   margin-right: 165px;
   display: flex;
   gap: 118px;
   flex-direction: row;
-  align-items: center;`
+  align-items: center;
+  @media screen and (width <= 1024px) {
+    margin-right: 15px;
+    gap: 20px;
+  }`
 ;
